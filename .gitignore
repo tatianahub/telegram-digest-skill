@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+telegram_channels.conf
+/dist/
+/*.skill

@@ -1,0 +1,13 @@
+{
+  "name": "telegram-digest-marketplace",
+  "owner": {
+    "name": "tatianahub"
+  },
+  "plugins": [
+    {
+      "name": "telegram-digest",
+      "source": "./",
+      "description": "Digest from public Telegram channels, no keys and no account login."
+    }
+  ]
+}
