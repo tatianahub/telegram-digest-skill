@@ -1,6 +1,6 @@
 ---
 name: telegram-digest
-description: "Builds a digest of new posts from open Telegram channels and publishes it as an artifact — no API key, bot, or account login required. On first run it asks which channels to track and remembers where it left off, so nothing needs to be filled in by hand. Use for requests like 'make a digest', 'set up a Telegram channel digest', 'what's new in the channels', 'summarize Telegram channels'."
+description: "Builds a digest of new posts from open Telegram channels and publishes it as an artifact — no API key, bot, or account login required. Must be run inside a Claude Project (or another location with persistent storage) so it can remember where it left off. On first run it checks for that, asks which channels to track and which language to use, then remembers everything for next time. Use for requests like 'make a digest', 'set up a Telegram channel digest', 'what's new in the channels', 'summarize Telegram channels'."
 ---
 
 # Telegram Channel Digest
@@ -11,13 +11,15 @@ Reads new posts from public channels, builds a digest out of them, and remembers
 
 If the config (see section 1) isn't found yet, this is the first run. Do the following:
 
-1. Ask for the list of channels: usernames without `@` and without `https://t.me/`, one per line or comma-separated.
-2. Ask where to store the config — by default suggest "in the current project, document `telegram_channels.conf`". If there's no project, say so plainly: without a storage location the config won't survive the next session, and suggest creating a project (or ask about an available document connector — Google Drive, etc.). Don't invent your own storage — use whatever the user provides.
-3. For each channel: `WebFetch https://t.me/s/<channel>/99999`, grab the maximum id from the page (no need to analyze the posts yet).
-4. Write the full config: `channel_name=MAX` for each channel, with an initialization-date comment on top.
-5. State explicitly: "Setup done — tracking N channels from this point on. The first digest will be built on the next run" — don't try to build a digest from history that doesn't exist.
+1. **Check the environment first.** If you're not running inside a Claude Project (or another location with persistent documents/connected storage), say so upfront, before asking anything else: without a Project the config can't survive between sessions, so every run would start from scratch. Ask the user to open this chat inside a Project (or point to a connected document store like Google Drive) before continuing. Don't proceed to channel setup until there's a real place to store the config.
+2. Ask for the list of channels: usernames without `@` and without `https://t.me/`, one per line or comma-separated.
+3. Ask which language to write the digest in (don't just infer it silently) — offer the language the user is writing in as the default, but let them pick something else. Save the answer in the config header (see section 1) so it's remembered for every future run, including unattended Scheduled Task runs where no one is there to answer.
+4. Confirm where to store the config — by default suggest "in the current project, document `telegram_channels.conf`".
+5. For each channel: `WebFetch https://t.me/s/<channel>/99999`, grab the maximum id from the page (no need to analyze the posts yet).
+6. Write the full config: `channel_name=MAX` for each channel, plus the chosen digest language and an initialization-date comment on top.
+7. State explicitly: "Setup done — tracking N channels from this point on, digest language: <language>. The first digest will be built on the next run" — don't try to build a digest from history that doesn't exist.
 
-If the user asks to add/remove a channel from an already-configured setup, don't re-initialize everything: for a new channel, repeat steps 3–4 for it only, leave the other lines untouched.
+If the user asks to add/remove a channel from an already-configured setup, don't re-initialize everything: for a new channel, repeat steps 5–6 for it only, leave the other lines and the saved language untouched.
 
 ## 1. Config
 
@@ -25,8 +27,11 @@ Format (independent of where the file physically lives):
 
 ```
 # updated: 2026-09-09
+# digest_language: English
 channel_name=last_post_id
 ```
+
+`digest_language` is set once during first-time setup (section 0) and reused on every run — including unattended Scheduled Task runs, where there's no one to ask.
 
 `last_post_id` is the id of the last post already included in a digest. New posts are all posts with `id > last_post_id`.
 
@@ -59,7 +64,7 @@ Fetch channels in parallel — 5–6 `WebFetch` calls in one block, not one at a
 
 ## 3. The digest
 
-Language: match the language the user is writing in; default to English if it's unclear. Tone: informal, easy to scan, pleasant to read. Keep technical details — don't water them down.
+Language: use whatever was set during first-time setup (`digest_language` in the config, section 1). If it's ever missing for some reason, ask instead of guessing. Tone: informal, easy to scan, pleasant to read. Keep technical details — don't water them down.
 
 **Structure:**
 

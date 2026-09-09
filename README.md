@@ -8,8 +8,8 @@ For convenience, we recommend setting up a Scheduled Task to run once a day and 
 
 ## What you need
 
+- **Run this inside a Claude Project** (or another location with persistent, connected document storage — Google Drive, etc.). The skill checks for this on first run and will stop and ask you to switch if it's missing — without it, the config can't survive between sessions and the digest starts from scratch every time.
 - Web-browsing access (`WebFetch`) — that's how the skill reads `t.me/s/<channel>`.
-- A place to store and version the config: a document in a Claude Project (recommended) or a connected document store (Google Drive, etc.). Without it, the digest starts from scratch every time.
 - Channels must be public (reachable at `t.me/s/<channel>` without signing in).
 
 ## Installation
@@ -31,9 +31,11 @@ Just tell Claude something like:
 > Set up a Telegram digest for channels: it_secur, xakep_ru
 
 From there the skill will:
-1. ask where to store the config (by default it suggests a `telegram_channels.conf` document in the current project);
-2. go through each channel and record the current starting point;
-3. confirm that setup is complete.
+1. check that you're inside a Project (or another location with persistent storage) — and stop to warn you if you're not;
+2. ask which language to write the digest in (defaults to whatever language you're writing in, but you can pick another);
+3. ask where to store the config (by default it suggests a `telegram_channels.conf` document in the current project);
+4. go through each channel and record the current starting point;
+5. confirm that setup is complete.
 
 Note: on first setup the skill does **not** pull the channel's full history — tracking starts from this point forward.
 
