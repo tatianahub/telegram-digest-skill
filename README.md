@@ -18,15 +18,19 @@ Either way, channels must be public (reachable at `t.me/s/<channel>` without sig
 
 ## Installation
 
-**As a plugin via Claude Code** (recommended):
+Plugins (and marketplace installs) only work in Cowork and Claude Code — not in regular chat on claude.ai. Pick the path that matches your setup:
+
+**Claude Code (terminal):**
 
 ```
 /plugin marketplace add tatianahub/telegram-digest-skill
 ```
 
-then select `telegram-digest` from the list and install it.
+then `/plugin install telegram-digest@telegram-digest-skill`.
 
-**Manually, as a standalone skill** — if your environment doesn't support plugins: copy `skills/telegram-digest/SKILL.md` into your skills folder.
+**Cowork (desktop app):** Customize → Plugins → Add → Add Marketplace → enter `tatianahub/telegram-digest-skill` (or the full GitHub URL) → install `telegram-digest` from the list.
+
+**Regular chat on claude.ai (including Free):** plugins don't work here — install the skill directly instead. Go to Settings → Skills, enable Code execution and file creation if it isn't already, then upload `skills/telegram-digest/SKILL.md`. Remember: without Cowork, this only gives you one-off digests with no memory between conversations (see "What you need" above).
 
 ## First-time setup
 
