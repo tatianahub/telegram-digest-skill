@@ -8,9 +8,13 @@ For convenience, we recommend setting up a Scheduled Task to run once a day and 
 
 ## What you need
 
-- **Run this inside a Claude Project** (or another location with persistent, connected document storage — Google Drive, etc.). The skill checks for this on first run and will stop and ask you to switch if it's missing — without it, the config can't survive between sessions and the digest starts from scratch every time.
-- Web-browsing access (`WebFetch`) — that's how the skill reads `t.me/s/<channel>`.
-- Channels must be public (reachable at `t.me/s/<channel>` without signing in).
+Two ways to use this, with different requirements:
+
+**For an automatic daily digest** — needs [Claude Cowork](https://support.claude.com/en/articles/13345190) (desktop app, macOS or Windows) on a paid plan (Pro, Max, Team, or Enterprise). Cowork gives Claude real file access, so it can save the config and remember channels between runs.
+
+**For a one-off digest in regular chat** — works on any plan, including Free. [Skills](https://support.claude.com/en/articles/12512180) are available on Free too — just enable Code execution and file creation in Settings → Capabilities. The catch: nothing is remembered between conversations, so you'd ask for a fresh digest each time.
+
+Either way, channels must be public (reachable at `t.me/s/<channel>` without signing in).
 
 ## Installation
 
@@ -31,11 +35,9 @@ Just tell Claude something like:
 > Set up a Telegram digest for channels: it_secur, xakep_ru
 
 From there the skill will:
-1. check that you're inside a Project (or another location with persistent storage) — and stop to warn you if you're not;
-2. ask which language to write the digest in (defaults to whatever language you're writing in, but you can pick another);
-3. ask where to store the config (by default it suggests a `telegram_channels.conf` document in the current project);
-4. go through each channel and record the current starting point;
-5. confirm that setup is complete.
+1. check whether it can save a file (Cowork) or not (regular chat) — and tell you straight up if this run won't be remembered;
+2. ask which channels to track and which language to write the digest in;
+3. (Cowork only) record the current starting point for each channel and confirm setup is complete.
 
 Note: on first setup the skill does **not** pull the channel's full history — tracking starts from this point forward.
 
@@ -53,11 +55,11 @@ Every run produces a fresh artifact with the latest posts, and the config moves 
 
 The skill only adds the new channel — it leaves the rest of the config alone.
 
-## Automatic delivery every morning (no manual request)
+## Automatic delivery every morning
 
-This is handled by the platform, not the skill:
+This is the recommended way to actually use the skill day to day, and it's handled by the platform, not the skill:
 
-1. Make sure setup (above) is already done and the config lives in a project document, not a temporary file.
+1. Make sure setup (above) was done in Cowork, so a config file exists.
 2. In Claude Cowork, open **Scheduled** → create a task with a prompt like "Build the Telegram channel digest" and the cadence you want (e.g. daily at 8 AM).
 3. Cowork will run the task on its own, using this skill — no need to type into chat manually.
 
@@ -79,7 +81,7 @@ The trade-off: it only works with public channels that have their web preview en
 
 - Only works with public channels (the `t.me/s/...` page, no login).
 - Doesn't store or publish content from private/closed channels.
-- The config is plain text with post ids, no personal data; if you store it in a shared project document, keep in mind who else has access to it.
+- The config is plain text with post ids, no personal data.
 
 ## Repository structure
 
