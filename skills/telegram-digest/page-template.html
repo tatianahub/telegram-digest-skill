@@ -1,0 +1,411 @@
+<!--
+  DIGEST PAGE TEMPLATE. Everything here is placeholder content: all text in angle
+  brackets is replaced with data from the current run. The CSS is the reference
+  version and must not be changed.
+  Copy this file as a whole and change only:
+    - <title> and .masthead-meta (date, counters)
+    - .eyebrow / h1 / .standfirst
+    - the four .tally cells
+    - the <details class="chan"> blocks, one per channel
+    - .silent, .glossary, footer
+  All visible labels (masthead title, tally labels, section headings, footer)
+  are written in English here; translate them into the digest language
+  (digest_language in the config).
+  Don't rewrite the CSS: the set of tokens and selectors is part of the digest's
+  signature look.
+
+  Key style decisions (don't deviate without a reason):
+    - Single column, max-width 760px, sticky masthead with date and counters.
+    - Cool grey palette (not warm cream paper), one accent: steel blue.
+    - Typography: Archivo (headings) + Source Serif 4 (body) + JetBrains Mono
+      (ids, times, channel names, service labels). Serif body text is a
+      deliberate choice for morning reading; don't switch it to sans.
+    - Channels are <details open>. Exactly open: the page must read in full
+      right after loading; collapsing is only a convenience.
+    - A post is a 78px / 1fr grid: mono column "id + time" on the left, text on
+      the right. Collapses into one column on narrow screens (<520px).
+    - The first sentence of a summary is a bold lead <span class="lead">.
+    - An unavailable/closed post gets .unavailable, orange bar on the left.
+    - Terms are a <dl>: term in accent monospace, definition in grey.
+-->
+
+<title>Digest for &lt;Month D&gt;</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{
+    --bg:#f3f4f6;
+    --surface:#ffffff;
+    --surface-2:#eceef2;
+    --ink:#171a20;
+    --muted:#5c6472;
+    --faint:#8b93a1;
+    --rule:#dde1e8;
+    --accent:#2f5fd0;
+    --accent-soft:#e6ecfb;
+    --warn:#a8530c;
+    --warn-soft:#f7ecdf;
+    --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --font-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1116;
+      --surface:#161a21;
+      --surface-2:#1d222b;
+      --ink:#e3e7ee;
+      --muted:#98a1b1;
+      --faint:#6f7889;
+      --rule:#252b35;
+      --accent:#7ba3ff;
+      --accent-soft:#1a2440;
+      --warn:#e0a061;
+      --warn-soft:#2a2017;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1116;
+    --surface:#161a21;
+    --surface-2:#1d222b;
+    --ink:#e3e7ee;
+    --muted:#98a1b1;
+    --faint:#6f7889;
+    --rule:#252b35;
+    --accent:#7ba3ff;
+    --accent-soft:#1a2440;
+    --warn:#e0a061;
+    --warn-soft:#2a2017;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:16.5px;
+    line-height:1.62;
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .masthead{
+    position:sticky;
+    top:env(safe-area-inset-top, 0px);
+    z-index:20;
+    background:var(--surface);
+    border-bottom:1px solid var(--rule);
+  }
+  .masthead-inner{
+    max-width:760px;
+    margin:0 auto;
+    padding-block:10px;
+    padding-left:20px;
+    padding-right:20px;
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .masthead-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .masthead-meta{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    color:var(--muted);
+    margin-left:auto;
+  }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding-block:38px 64px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(30px,6.4vw,44px);
+    line-height:1.08;
+    letter-spacing:-0.025em;
+    text-wrap:balance;
+    margin:0 0 16px;
+  }
+  .standfirst{
+    font-size:17.5px;
+    color:var(--muted);
+    max-width:60ch;
+    margin:0 0 28px;
+  }
+
+  .tally{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0;
+    border:1px solid var(--rule);
+    border-radius:3px;
+    background:var(--surface);
+    overflow:hidden;
+    margin-bottom:40px;
+  }
+  .tally-cell{
+    flex:1 1 120px;
+    padding:14px 18px;
+    border-right:1px solid var(--rule);
+  }
+  .tally-cell:last-child{border-right:none}
+  .tally-num{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:26px;
+    font-variant-numeric:tabular-nums;
+    line-height:1.1;
+    display:block;
+  }
+  .tally-label{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--faint);
+  }
+
+  .chan{
+    border-top:1px solid var(--rule);
+    padding-block:4px;
+  }
+  .chan > summary{
+    cursor:pointer;
+    list-style:none;
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding-block:16px;
+  }
+  .chan > summary::-webkit-details-marker{display:none}
+  .chan > summary:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+  .chan-name{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:14.5px;
+    letter-spacing:-0.01em;
+  }
+  .chan-count{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--muted);
+    background:var(--surface-2);
+    border-radius:2px;
+    padding:2px 7px;
+    font-variant-numeric:tabular-nums;
+  }
+  .chan-caret{
+    margin-left:auto;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--faint);
+    transition:transform .18s ease;
+  }
+  .chan[open] > summary .chan-caret{transform:rotate(90deg)}
+  @media (prefers-reduced-motion: reduce){
+    .chan-caret{transition:none}
+  }
+
+  .posts{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    padding-bottom:26px;
+    padding-left:2px;
+  }
+  .post{
+    display:grid;
+    grid-template-columns:78px 1fr;
+    gap:14px;
+    align-items:start;
+  }
+  .post-tag{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    line-height:1.5;
+    color:var(--faint);
+    font-variant-numeric:tabular-nums;
+    padding-top:5px;
+  }
+  .post-tag a{
+    color:var(--accent);
+    text-decoration:none;
+    font-weight:600;
+  }
+  .post-tag a:hover{text-decoration:underline}
+  .post-tag .t{display:block;color:var(--faint)}
+  .post-body{margin:0;max-width:62ch}
+  .post-body .lead{font-weight:600}
+  .unavailable{
+    color:var(--warn);
+    background:var(--warn-soft);
+    border-left:2px solid var(--warn);
+    padding:8px 12px;
+    font-size:15px;
+  }
+  code{
+    font-family:var(--font-mono);
+    font-size:0.87em;
+    background:var(--surface-2);
+    padding:1px 4px;
+    border-radius:2px;
+  }
+
+  @media (max-width:520px){
+    .post{grid-template-columns:1fr;gap:4px}
+    .post-tag{padding-top:0;display:flex;gap:10px}
+    .post-tag .t{display:inline}
+  }
+
+  .silent{
+    margin-top:40px;
+    border-top:1px solid var(--rule);
+    padding-top:26px;
+  }
+  .silent h2, .glossary h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin:0 0 14px;
+  }
+  .silent p{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--muted);
+    margin:0;
+    line-height:2;
+  }
+  .note{
+    font-size:14.5px;
+    color:var(--muted);
+    margin-top:14px;
+    max-width:62ch;
+  }
+
+  .glossary{
+    margin-top:42px;
+    border-top:1px solid var(--rule);
+    padding-top:26px;
+  }
+  .glossary dl{margin:0;display:flex;flex-direction:column;gap:11px}
+  .glossary dt{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--accent);
+  }
+  .glossary dd{
+    margin:2px 0 0;
+    font-size:15px;
+    color:var(--muted);
+    max-width:64ch;
+  }
+
+  footer{
+    margin-top:46px;
+    border-top:1px solid var(--rule);
+    padding-top:18px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--faint);
+  }
+</style>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <p class="masthead-title">Telegram digest</p>
+    <span class="masthead-meta">&lt;YYYY-MM-DD&gt; · &lt;N&gt; posts · &lt;N&gt; channels</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <p class="eyebrow">Daily roundup · &lt;timezone&gt;</p>
+  <h1>Digest for &lt;Month D&gt;</h1>
+  <!-- Standfirst: 1–2 sentences with the biggest news of the day, concrete, no filler.
+       List the 3–4 main stories of the issue, comma-separated. -->
+  <p class="standfirst">&lt;The day's highlights: story, story, story and story.&gt;</p>
+
+  <!-- Four cells, all required. The last one is reading time: count the
+       characters of the finished page without tags and divide by 1300
+       (see section 4 of SKILL.md), round up to a whole minute, write it with a tilde.
+       A fifth cell may add whatever made this issue stand out — the loudest
+       channel, the number of duplicates, anything meaningful. Nothing to say — don't add it. -->
+  <div class="tally">
+    <div class="tally-cell"><span class="tally-num">&lt;N&gt;</span><span class="tally-label">new posts</span></div>
+    <div class="tally-cell"><span class="tally-num">&lt;N&gt;</span><span class="tally-label">active channels</span></div>
+    <div class="tally-cell"><span class="tally-num">&lt;N&gt;</span><span class="tally-label">silent</span></div>
+    <div class="tally-cell"><span class="tally-num">~&lt;N&gt;</span><span class="tally-label">min read</span></div>
+  </div>
+
+  <!-- SAMPLE CHANNEL BLOCK. One such <details> per channel with new posts,
+       in config order. chan-count is the number of posts in the block. -->
+  <details class="chan" open>
+    <summary><span class="chan-name">&lt;channel&gt;</span><span class="chan-count">&lt;N&gt;</span><span class="chan-caret">›</span></summary>
+    <div class="posts">
+
+      <!-- regular post: lead + 3–5 sentences of substance -->
+      <div class="post">
+        <div class="post-tag"><a href="https://t.me/s/&lt;channel&gt;/&lt;id&gt;">&lt;id&gt;</a><span class="t">&lt;HH:MM&gt;</span></div>
+        <p class="post-body"><span class="lead">&lt;One-sentence lead: what happened.&gt;</span> &lt;Then 3–5 sentences: details and specifics — versions, names, numbers, CVE ids. Why it matters. Keep technical details, don't water them down. A term worth explaining goes to the Terms section at the bottom, not here.&gt; Commands, paths and identifiers go in <code>&lt;code&gt;</code>.</p>
+      </div>
+
+      <!-- post whose content couldn't be retrieved -->
+      <div class="post">
+        <div class="post-tag"><a href="https://t.me/s/&lt;channel&gt;/&lt;id&gt;">&lt;id&gt;</a><span class="t">&lt;HH:MM&gt;</span></div>
+        <p class="post-body unavailable">&lt;The post exists, but its text couldn't be retrieved — briefly why.&gt;</p>
+      </div>
+
+    </div>
+  </details>
+
+  <div class="silent">
+    <h2>No new posts</h2>
+    <p>&lt;channel&gt; · &lt;channel&gt; · &lt;channel&gt;</p>
+    <!-- .note only if a channel has a caveat: failed fetch, id mismatch,
+         duplicates. No caveats — remove the whole paragraph. -->
+    <p class="note">&lt;Caveat for a channel: what exactly went wrong, what was done about it and why.&gt;</p>
+  </div>
+
+  <div class="glossary">
+    <h2>Terms</h2>
+    <!-- Only genuinely hard-to-understand things: acronyms, niche technologies,
+         non-obvious names. Don't explain common knowledge. -->
+    <dl>
+      <dt>&lt;term&gt;</dt>
+      <dd>&lt;A one- or two-sentence explanation in plain words, not a textbook.&gt;</dd>
+
+      <dt>&lt;term&gt;</dt>
+      <dd>&lt;A one- or two-sentence explanation in plain words, not a textbook.&gt;</dd>
+    </dl>
+  </div>
+
+  <footer>Collected automatically from &lt;N&gt; channels · source: t.me/s/&lt;channel&gt; · the next run will pick up posts newer than the recorded ids</footer>
+
+</div>

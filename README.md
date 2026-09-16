@@ -30,7 +30,7 @@ then `/plugin install telegram-digest@telegram-digest-skill`.
 
 **Cowork (desktop app):** Customize → Plugins → Add → Add Marketplace → enter `tatianahub/telegram-digest-skill` (or the full GitHub URL) → install `telegram-digest` from the list.
 
-**Regular chat on claude.ai (including Free):** plugins don't work here — install the skill directly instead. Go to Settings → Skills, enable Code execution and file creation if it isn't already, then upload `skills/telegram-digest/SKILL.md`. Remember: without Cowork, this only gives you one-off digests with no memory between conversations (see "What you need" above).
+**Regular chat on claude.ai (including Free):** plugins don't work here — install the skill directly instead. Go to Settings → Skills, enable Code execution and file creation if it isn't already, then upload the `skills/telegram-digest/` folder as a ZIP (it contains `SKILL.md` and `page-template.html` — the skill needs both). Remember: without Cowork, this only gives you one-off digests with no memory between conversations (see "What you need" above).
 
 ## First-time setup
 
@@ -96,7 +96,8 @@ The trade-off: it only works with public channels that have their web preview en
 │   └── marketplace.json    # lets the repo act as its own marketplace
 ├── skills/
 │   └── telegram-digest/
-│       └── SKILL.md
+│       ├── SKILL.md
+│       └── page-template.html   # fixed page design for the digest artifact
 ├── LICENSE
 └── README.md
 ```

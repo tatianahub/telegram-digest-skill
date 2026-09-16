@@ -73,7 +73,7 @@ Language: use whatever was set during first-time setup (`digest_language` in the
 
 1. **By channel** — each channel as its own block, in the order from the config. Inside, each new post as its own paragraph.
 2. **Post summary** — medium level of detail: not a one-liner, not a full retelling either. Aim for 3–5 sentences. What happened, why it matters, specifics (versions, names, numbers).
-3. **Link at the end of the post summary**, format: `([number](https://t.me/s/channel/number))`
+3. **The post link** lives in the mono column on the left (`.post-tag`), not at the end of the text — see the template in section 4.
 4. **Channels with no new posts** — as a list at the end, one line.
 5. **Terms** — the final section. Only genuinely hard-to-understand things: acronyms, niche technologies, non-obvious names. Use judgment about what's worth explaining; don't explain common knowledge.
 
@@ -81,13 +81,43 @@ Don't group by topic and don't filter by category — cover everything significa
 
 ## 4. Publishing
 
-The digest is an HTML artifact.
+The digest is an HTML artifact. **The page design is fixed** — it's a recognizable issue that comes out every day, not a new design task.
 
-- If an artifact-styling skill is available (e.g. `artifact-design`), load it before laying out the page. If not available, build a clean, self-contained HTML page with no external dependencies.
-- Write the file to the working directory, then use `Artifact`/`present_files` with its path.
-- Title with the date, e.g. "Digest for September 8".
-- Channels work well as collapsible blocks with a post count; a short summary up top (how many channels, how many posts).
-- Every run is a new artifact (a new file path). A given day's digest is never overwritten.
+**How to do it:**
+
+1. Read `page-template.html` next to this file. It contains the reference CSS and placeholder markup: all text in angle brackets (`<channel>`, `<id>`, `<HH:MM>`, `<N>`) is a placeholder for this run's data.
+2. Copy the template to the working directory as `digest-<YYYY-MM-DD>.html` and replace the placeholders with today's issue. No angle-bracket placeholders may remain in the published page; remove the hint comments too. The template's visible labels (masthead title, tally labels, section headings, footer) are in English — translate them into `digest_language`.
+3. Publish with `Artifact`/`present_files` using the file path. On first publish use the 📰 favicon and `news` as the icon, where the tool supports them.
+
+**Don't touch the CSS.** Tokens, fonts and selectors are part of the signature look: a cool grey palette with a single blue accent, Archivo + Source Serif 4 + JetBrains Mono, a single 760px column, a sticky masthead with the date and counters. No need to load `artifact-design` or any other styling skill — the design decisions are already made and recorded in the template.
+
+**What changes from issue to issue:** `<title>` and `.masthead-meta`, `h1`, the `.standfirst` intro, the `.tally` cells, the `<details class="chan">` blocks, the `.silent` and `.glossary` sections, the footer.
+
+**Reading time** is the fourth `.tally` cell. Calculate it from the finished file, before publishing:
+
+```bash
+python3 -c "
+import re
+t=open('digest-<YYYY-MM-DD>.html').read()
+t=re.sub(r'<style.*?</style>','',t,flags=re.S)
+t=re.sub(r'<!--.*?-->','',t,flags=re.S)
+t=re.sub(r'<[^>]+>',' ',t)
+t=re.sub(r'\s+',' ',t).strip()
+print(len(t)//1300+1)
+"
+```
+
+Stripping `<style>` and comments is mandatory — otherwise the CSS gets counted and the result is three times too high. 1300 characters per minute is the pace of careful reading of technical text; an issue with 47 posts comes out at ~14 minutes. Write the result with a tilde: `~14`. If the file doesn't exist yet and you need an estimate — 20 seconds per post plus 2 minutes for the intro, glossary and caveats.
+
+**Markup rules that are easy to break:**
+
+- Channel blocks are `<details class="chan" open>`. Exactly `open`: the page must read in full right after loading; collapsing is only a convenience.
+- A post is a `.post` grid: `.post-tag` on the left with the number link and time, `.post-body` on the right. Wrap the first sentence of the summary in `<span class="lead">`.
+- A post whose content couldn't be retrieved gets `.post-body.unavailable` with an explanation of why.
+- Channel order follows the config. Within a channel, posts go in ascending id order, except when a channel clearly has a top story: it can be moved to the top of the block.
+- If a channel has a caveat (failed fetch, id mismatch, duplicates), add a `.note` paragraph in the "No new posts" section. No caveats — remove the paragraph entirely.
+
+Every run is a new artifact (a new file path). A given day's digest is never overwritten.
 
 ## 5. Updating the config
 
