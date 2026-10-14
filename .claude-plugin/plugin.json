@@ -1,11 +1,15 @@
 {
   "name": "telegram-digest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Builds a digest from public Telegram channels. No key, no bot, no phone-number login: name your channels and it keeps track of what's new from there.",
   "author": {
     "name": "tatianahub"
   },
   "repository": "https://github.com/tatianahub/telegram-digest-skill",
   "license": "MIT",
-  "keywords": ["telegram", "digest", "news"]
+  "keywords": [
+    "telegram",
+    "digest",
+    "news"
+  ]
 }
