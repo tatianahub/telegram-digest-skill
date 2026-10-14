@@ -73,6 +73,16 @@ A few things to know:
 - Claude may shift a schedule set exactly on the hour or half hour a few minutes earlier (e.g. 20:15 instead of 20:30) to avoid peak-time delays. Ask for the exact time if it matters.
 - If nothing new was posted, you still get a short "no new posts" message.
 
+### Turn on auto-approve for the scheduled task
+
+By default, a scheduled run may stop and wait for you to approve its actions (fetching pages, publishing the artifact, sending email). Nobody is there to click "approve" at 20:30, so the run stalls and the automation is lost.
+
+To fix this, open the task (**Edit scheduled task**) and set its approvals to **Automatically approve**.
+
+Auto-approve is not safe in general, but it is acceptable for this task: the skill only reads public channel pages and writes its own config doc, and it has no access to your secrets.
+
+**Be careful if you connect an email MCP.** Channel posts are untrusted text, and a post could contain a prompt injection telling Claude to do something else with your mailbox. Where your connector allows it, limit the scheduled task to sending email only, and don't give it read or delete access to your inbox.
+
 ## Add or remove a channel
 
 In the project where the digest is set up, just write:
