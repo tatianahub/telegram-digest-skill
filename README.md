@@ -6,6 +6,10 @@ I spent a long time looking for a simple way to get a Telegram digest that works
 
 The skill builds a digest of new posts from public Telegram channels and publishes it as an artifact page.
 
+Example:
+
+<img width="624" alt="image" src="https://github.com/user-attachments/assets/6fddfd80-ba72-49fa-9adf-00e1949b4540" />
+
 For convenience, set up a scheduled task that runs once a day and sends the result to your inbox through a connected email MCP (for example, Gmail).
 
 ## What you need
