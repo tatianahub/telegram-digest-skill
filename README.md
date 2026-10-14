@@ -21,6 +21,17 @@ Plugins (and marketplace installs) work only in Cowork and Claude Code, not in r
 
 Settings → Customize → Plugins → Add → Add Marketplace → enter `tatianahub/telegram-digest-skill` (or the full GitHub URL) → install `telegram-digest` from the list.
 
+**Claude Code (terminal):**
+ 
+Add this repository as a marketplace, then install the plugin from it:
+ 
+```
+/plugin marketplace add tatianahub/telegram-digest-skill
+/plugin install telegram-digest@telegram-digest-marketplace
+```
+ 
+Restart Claude Code if the skill doesn't show up right away. To pick up a newer version later, run `/plugin marketplace update telegram-digest-marketplace`.
+
 ## First-time setup
 
 1. Create a separate project in Claude and give it a clear name, for example `Scheduled digest`. The digest keeps its channel list and reading position in a doc inside this project, so every digest run (manual or scheduled) must happen in this same project.
@@ -30,7 +41,7 @@ Settings → Customize → Plugins → Add → Add Marketplace → enter `tatian
 
 From there the skill will:
 
-1. Ask which channels to track (usernames without `@` or `https://t.me/`, e.g. `it_secur, xakep_ru`) and which language to write the digest in.
+1. Ask which channels to track (usernames without `@` or `https://t.me/`, e.g. `durov, thehackernews`) and which language to write the digest in.
 2. Record each channel's current starting point in the project doc and confirm that setup is complete.
 
 > **Note:** on first setup the skill does **not** pull the channels' full history. Tracking starts from this point forward.
@@ -47,11 +58,13 @@ Every run produces a fresh artifact with the latest posts.
 
 To get the digest automatically, ask in the same project:
 
-> Build Scheduled every day at 20.30 gmt +3
-
+> Build the Telegram digest every day at 8:30 PM Berlin time
+ 
 If you have an email MCP connected (e.g. Gmail), ask for delivery as well:
-
-> Build Scheduled every day at 20.30 gmt +3 and result sent to <your email>@gmail.com
+ 
+> Build the Telegram digest every day at 8:30 PM Berlin time and email it to <you>@example.com
+ 
+Name your own city or time zone (`Moscow`, `New York`, `Europe/Berlin`, `UTC+2`): without it the schedule may run in UTC.
 
 A few things to know:
 
