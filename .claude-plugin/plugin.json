@@ -1,6 +1,6 @@
 {
   "name": "telegram-digest",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Builds a digest from public Telegram channels. No key, no bot, no phone-number login: name your channels and it keeps track of what's new from there.",
   "author": {
     "name": "tatianahub"
